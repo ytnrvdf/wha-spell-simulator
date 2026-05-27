@@ -11,6 +11,7 @@ export class DrawingCapture {
     this.pointerId = null;
     this.enabled = false;
     this.locked = false;
+    this.tool = "pen";
 
     this.handlePointerDown = this.handlePointerDown.bind(this);
     this.handlePointerMove = this.handlePointerMove.bind(this);
@@ -103,6 +104,15 @@ export class DrawingCapture {
 
     const points = this.currentPoints;
     this.clearPreview();
+
+    if (this.tool === "eraser") {
+      if (points.length >= 1) {
+        this.strokeStore.removeStrokesNearPath(points, this.config.input.eraserThreshold);
+        this.callbacks.onCommit?.();
+      }
+      this.callbacks.onPreview?.(null);
+      return;
+    }
 
     if (points.length >= 2 && pathLength(points) >= this.config.input.minStrokeLength) {
       this.strokeStore.addStroke(points);

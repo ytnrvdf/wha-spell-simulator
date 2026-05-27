@@ -6,6 +6,8 @@ export function getElements() {
     canvasHint: document.querySelector("#canvasHint"),
     undoButton: document.querySelector("#undoButton"),
     clearButton: document.querySelector("#clearButton"),
+    penToolButton: document.querySelector("#penToolButton"),
+    eraserToolButton: document.querySelector("#eraserToolButton"),
     guidesToggle: document.querySelector("#guidesToggle"),
     diagnosticsToggle: document.querySelector("#diagnosticsToggle"),
     dictionaryRootPanel: document.querySelector("#dictionaryRootPanel"),

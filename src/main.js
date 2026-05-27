@@ -56,7 +56,8 @@ function animationFrame(timestamp) {
     currentStroke: capture.getCurrentStroke(),
     pipeline,
     showGuides: elements.guidesToggle.checked,
-    showDebug: elements.diagnosticsToggle.checked
+    showDebug: elements.diagnosticsToggle.checked,
+    tool: capture.tool
   });
 
   if (spellIR.active) {
@@ -78,7 +79,17 @@ function animationFrame(timestamp) {
   requestAnimationFrame(animationFrame);
 }
 
+function setActiveTool(tool) {
+  capture.tool = tool;
+  elements.penToolButton.classList.toggle("active", tool === "pen");
+  elements.eraserToolButton.classList.toggle("active", tool === "eraser");
+  elements.glyphCanvas.style.cursor = tool === "eraser" ? "default" : "crosshair";
+}
+
 function setupControls() {
+  elements.penToolButton.addEventListener("click", () => setActiveTool("pen"));
+  elements.eraserToolButton.addEventListener("click", () => setActiveTool("eraser"));
+
   elements.undoButton.addEventListener("click", () => {
     store.undo();
     previousRing = null;
