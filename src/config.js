@@ -34,8 +34,31 @@ export const CONFIG = {
     boundaryTolerance: 0.055
   },
   recognition: {
-    // 0..1 final recognizer score floor.
-    minConfidence: 0.48
+    // Symbol recognizer engine: "template" (built-in hand-tuned stroke matcher,
+    // synchronous) or "siamese" (learned ONNX embedding, asynchronous). The
+    // siamese engine reuses the exact same stroke grouping; it only replaces
+    // the per-candidate classification step. See siamese/README.md.
+    engine: "template",
+
+    // 0..1 final recognizer score floor (shared by both engines).
+    minConfidence: 0.48,
+
+    // Settings for the "siamese" engine (ignored by the template engine).
+    siamese: {
+      // The model + prototypes ship as bundled assets in
+      // src/parser/siamese-assets/ and load automatically. Set these only to
+      // override with custom hosting (absolute URL).
+      modelUrl: null,
+      prototypesUrl: null,
+      // onnxruntime-web WASM binaries; CDN by default to keep the bundle light.
+      wasmPaths: "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.26.0/dist/",
+      // Rotations (degrees) tested per candidate; best cosine is kept. Covers
+      // ring-relative sign orientation without the template engine's rotation
+      // machinery.
+      rotationsDeg: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
+      // Softmax temperature over per-glyph cosine similarities.
+      temperature: 0.08
+    }
   },
   compiler: {
     // 0..1 confidence; minimum primary sigil confidence before a spell is valid.

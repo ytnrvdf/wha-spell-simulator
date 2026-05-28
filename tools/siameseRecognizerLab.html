@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Siamese Recognizer Lab</title>
+    <style>
+      :root { color-scheme: light; }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #efe6d4;
+        color: #241b16;
+        padding: 16px;
+      }
+      h1 { font-size: 18px; margin: 0 0 4px; }
+      p.lead { margin: 0 0 14px; font-size: 13px; opacity: 0.8; }
+      .layout { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+      .panel {
+        background: #fbf5e8;
+        border: 1px solid #d8c8a8;
+        border-radius: 10px;
+        padding: 12px;
+      }
+      canvas#drawCanvas {
+        background: #fffdf6;
+        border: 1px solid #c9b48c;
+        border-radius: 8px;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .controls { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+      button {
+        font: inherit; padding: 5px 12px; border-radius: 6px;
+        border: 1px solid #b0986a; background: #f0e3c6; cursor: pointer;
+      }
+      .render-wrap { text-align: center; }
+      canvas#renderCanvas {
+        image-rendering: pixelated;
+        width: 168px; height: 168px;
+        background: #000; border: 1px solid #c9b48c; border-radius: 6px;
+      }
+      .render-wrap small { display: block; opacity: 0.7; margin-top: 4px; }
+      .columns { display: flex; gap: 18px; flex-wrap: wrap; }
+      .results { min-width: 230px; }
+      .results h2 { font-size: 14px; margin: 0 0 8px; }
+      .match { margin-bottom: 6px; }
+      .match-head { display: flex; justify-content: space-between; font-size: 13px; }
+      .match-head .best { font-weight: 700; }
+      .bar { height: 6px; background: #e3d4b2; border-radius: 4px; overflow: hidden; }
+      .bar > span { display: block; height: 100%; background: #1f6f73; }
+      .status { font-size: 13px; margin-bottom: 10px; }
+      .status b { color: #1f6f73; }
+      .muted { opacity: 0.6; }
+    </style>
+  </head>
+  <body>
+    <h1>Siamese Recognizer Lab</h1>
+    <p class="lead">
+      Draw one sigil or sign. See exactly what the neural net sees (the 56×56
+      render) and how the learned siamese recognizer ranks it, side by side with
+      the built-in template matcher. The browser port of the Python glyph GUI.
+    </p>
+    <div class="layout">
+      <div class="panel">
+        <canvas id="drawCanvas" width="360" height="360"></canvas>
+        <div class="controls">
+          <button id="undoButton" type="button">Undo</button>
+          <button id="clearButton" type="button">Clear</button>
+        </div>
+        <div class="render-wrap" style="margin-top: 12px;">
+          <canvas id="renderCanvas" width="56" height="56"></canvas>
+          <small>net input (56×56)</small>
+        </div>
+      </div>
+      <div class="panel columns">
+        <div class="results">
+          <h2>Siamese (learned)</h2>
+          <div id="siameseStatus" class="status muted">loading model…</div>
+          <div id="siameseMatches"></div>
+        </div>
+        <div class="results">
+          <h2>Template (built-in)</h2>
+          <div id="templateStatus" class="status muted">—</div>
+          <div id="templateMatches"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./siameseRecognizerLab.js"></script>
+  </body>
+</html>

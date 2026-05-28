@@ -66,8 +66,22 @@ These tools are available from the app:
 /tools/strokeTemplateMaker.html
 /tools/strokeTemplateViewer.html
 /tools/sigilSignDetectorLab.html
+/tools/siameseRecognizerLab.html
 /tools/spellEffectLab.html
 ```
+
+## Optional: learned recognizer
+
+Alongside the built-in stroke-template matcher there is an optional learned
+recognizer: a small siamese CNN that runs in the browser via `onnxruntime-web`
+and classifies each grouped candidate by embedding similarity. It reuses the
+existing stroke grouping and only replaces the per-candidate classification, so
+the static deploy is unchanged and the default behavior is untouched.
+
+Enable it by setting `recognition.engine` to `"siamese"` in `src/config.js`, or
+without rebuilding by appending `?engine=siamese` to the app URL. Compare both
+engines on the same drawing in `/tools/siameseRecognizerLab.html`.
+Training, ONNX export, and the prototype build live in [`siamese/`](siamese/README.md).
 
 ## Tests
 

@@ -1,0 +1,8 @@
+{
+  "imageSize": 56,
+  "inChannels": 1,
+  "embeddingDim": 64,
+  "inputName": "glyph",
+  "outputName": "embedding",
+  "normalized": true
+}

@@ -125,7 +125,7 @@ test("ignores outside strokes when closed ring is evaluated without prior state"
   assert.deepEqual(sealed.strokeIds, ["s1", "s3"]);
 });
 
-test("classifies symbols inside a detected ring without crashing", () => {
+test("classifies symbols inside a detected ring without crashing", async () => {
   const openRing = openRingStroke("s1");
   const closing = closingStroke("s2");
   const columnStem = {
@@ -170,7 +170,7 @@ test("classifies symbols inside a detected ring without crashing", () => {
     ]
   };
 
-  const result = classifyDrawing({
+  const result = await classifyDrawing({
     strokes: [openRing, closing, columnStem, columnBase],
     previousRing: null,
     dictionary,

@@ -2,7 +2,7 @@ import { cleanStrokes } from "./strokeCleaner.js";
 import { detectRing } from "./ringDetector.js";
 import { classifyStrokesAgainstRing } from "./coordinateNormalizer.js";
 import { buildSymbolCandidates } from "./strokeGrouper.js";
-import { recognizeCandidates } from "./symbolRecognizer.js";
+import { recognizeCandidates } from "./recognizerEngine.js";
 import { GLYPH_WARNINGS } from "./glyphWarnings.js";
 import { clamp, formatNumber, mean, vectorFromAngleDeg } from "../utils/geometry.js";
 
@@ -160,7 +160,7 @@ function warningList(ring, primarySigil, unsupportedMultipleSigils, unknowns, re
   return warnings;
 }
 
-export function classifyDrawing({ strokes, previousRing = null, dictionary, config }) {
+export async function classifyDrawing({ strokes, previousRing = null, dictionary, config }) {
   const cleanedStrokes = cleanStrokes(strokes, config);
   const ring = detectRing(cleanedStrokes, previousRing, config);
 
@@ -193,7 +193,7 @@ export function classifyDrawing({ strokes, previousRing = null, dictionary, conf
 
   const classifications = classifyStrokesAgainstRing(cleanedStrokes, ring, config);
   const candidates = buildSymbolCandidates(cleanedStrokes, classifications, ring, config);
-  const recognitions = recognizeCandidates(candidates, dictionary, config);
+  const recognitions = await recognizeCandidates(candidates, dictionary, config);
   const sigils = recognizedSigils(recognitions);
   const primarySigil = selectPrimarySigil(sigils);
   const unsupportedMultipleSigils = sigils

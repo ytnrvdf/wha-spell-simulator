@@ -1,0 +1,11 @@
+# Trained weights are large; the runtime ships src/parser/siamese-assets/model.onnx instead.
+# See checkpoints/README.md for how to obtain or regenerate them.
+checkpoints/*.pt
+
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+outputs/
+.aim/
+datasets/
