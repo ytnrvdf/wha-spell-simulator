@@ -293,6 +293,33 @@ body:not(.sigil-maker-page) .app-shell {
   width: 100%;
 }
 
+.tool-button-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tool-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.tool-button svg {
+  display: block;
+}
+
+.tool-button.active {
+  background: var(--teal);
+  color: #fff8df;
+  border-color: var(--teal);
+}
+
+.tool-button.active:hover {
+  background: #236a75;
+}
+
 .control-section .toggle {
   justify-content: space-between;
 }

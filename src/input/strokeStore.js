@@ -26,6 +26,28 @@ export function createStrokeStore() {
       nextId = 1;
     },
 
+    removeStrokesNearPath(eraserPath, threshold = 22) {
+      if (!eraserPath?.length) {
+        return [];
+      }
+      const thresholdSq = threshold * threshold;
+      const removed = [];
+      strokes = strokes.filter((stroke) => {
+        for (const ep of eraserPath) {
+          for (const sp of stroke.points) {
+            const dx = ep.x - sp.x;
+            const dy = ep.y - sp.y;
+            if (dx * dx + dy * dy <= thresholdSq) {
+              removed.push(stroke);
+              return false;
+            }
+          }
+        }
+        return true;
+      });
+      return removed;
+    },
+
     scale(scaleX, scaleY) {
       strokes = strokes.map((stroke) => ({
         ...stroke,

@@ -114,7 +114,7 @@ function drawSingleGlowingStroke(ctx, stroke, timestamp, glowAlpha = 1) {
   }
 }
 
-export function drawStrokes(ctx, strokes, currentStroke, config) {
+export function drawStrokes(ctx, strokes, currentStroke, config, tool = "pen") {
   for (const stroke of strokes) {
     drawSingleStroke(ctx, stroke, {
       color: config.renderer.inkColor,
@@ -124,10 +124,11 @@ export function drawStrokes(ctx, strokes, currentStroke, config) {
   }
 
   if (currentStroke) {
+    const isEraser = tool === "eraser";
     drawSingleStroke(ctx, currentStroke, {
-      color: config.renderer.inkColor,
-      lineWidth: 4.4,
-      alpha: 0.72
+      color: isEraser ? (config.renderer.eraserColor ?? "#b84531") : config.renderer.inkColor,
+      lineWidth: isEraser ? (config.renderer.eraserWidth ?? 6) : 4.4,
+      alpha: isEraser ? 0.55 : 0.72
     });
   }
 }

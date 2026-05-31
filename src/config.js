@@ -10,7 +10,10 @@ export const CONFIG = {
 
     // Integer passes, usually 0..3; set to 0 to use raw points.
     // Higher softens hand jitter but can distort sharp symbols.
-    smoothingPasses: 1
+    smoothingPasses: 1,
+
+    // Canvas pixels; radius around eraser path to remove strokes.
+    eraserThreshold: 22
   },
   ring: {
     // Canvas pixels; smallest ring radius accepted as spell paper boundary.
