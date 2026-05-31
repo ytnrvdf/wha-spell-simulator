@@ -7,6 +7,19 @@ A fan-made browser-based spell drawing simulator inspired by *[Witch Hat Atelier
   <p>Try here: <a href="https://ytnrvdf.github.io/wha-spell-simulator">https://ytnrvdf.github.io/wha-spell-simulator</a></p>
 </div>
 
+Video: https://youtu.be/zVWYW0K3ikg
+
+## Project Status
+
+This is an experimental prototype. I may review issues and PRs when I have time, but I cannot commit to active long-term maintenance.
+
+## Community
+
+Thanks to [@cosykid](https://github.com/cosykid) for helping start the community around the project.
+A community Discord has been created for people who want to discuss ideas, share experiments, or continue improving the simulator together.
+
+Community Discord: [discord.gg/XkdEe4wB](https://discord.gg/XkdEe4wB)
+
 ## Fan Project Notice
 
 This is an unofficial fan-made project for learning, experimentation, and appreciation. It is not affiliated with, endorsed by, or sponsored by the official creators, publishers, licensors, or production partners of *Witch Hat Atelier*.
