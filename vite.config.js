@@ -9,6 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: [
         "index.html",
+        "tools/siameseRecognizerLab.html",
         "tools/sigilSignDetectorLab.html",
         "tools/spellEffectLab.html",
         "tools/strokeTemplateMaker.html",

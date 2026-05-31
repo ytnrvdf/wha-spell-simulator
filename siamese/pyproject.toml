@@ -1,0 +1,31 @@
+[project]
+name = "wha-siamese"
+version = "0.1.0"
+description = "Siamese glyph recognizer: training, ONNX export, and prototype build for the WHA spell simulator"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aim",
+    "matplotlib",
+    "numpy",
+    "onnx>=1.21",
+    "onnxruntime>=1.20",
+    "onnxscript",
+    "pillow>=11.0",
+    "scikit-learn>=1.5",
+    "torch",
+    "umap-learn>=0.5",
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

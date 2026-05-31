@@ -3,6 +3,7 @@ import { loadDictionary } from "./dictionary/dictionaryLoader.js";
 import { DrawingCapture } from "./input/drawingCapture.js";
 import { createStrokeStore } from "./input/strokeStore.js";
 import { classifyDrawing } from "./parser/drawingClassifier.js";
+import { warmupRecognizer } from "./parser/recognizerEngine.js";
 import { compileSpell } from "./compiler/spellBuilder.js";
 import { CanvasRenderer } from "./renderer/canvasRenderer.js";
 import { setupCanvasSizing as setupResponsiveCanvasSizing } from "./ui/canvasSizing.js";
@@ -11,6 +12,14 @@ import { getElements } from "./ui/elements.js";
 import { renderDictionaryReference } from "./ui/dictionaryReferenceView.js";
 import { updateStatus, updateSummary } from "./ui/spellSummaryView.js";
 import { setupTabs } from "./ui/tabs.js";
+
+// Allow overriding the recognizer engine from the URL (?engine=siamese) so both
+// engines can be compared on the same build without editing config + rebuilding.
+// The committed default in config.js stays "template".
+const engineOverride = new URLSearchParams(window.location.search).get("engine");
+const APP_CONFIG = engineOverride
+  ? { ...CONFIG, recognition: { ...CONFIG.recognition, engine: engineOverride } }
+  : CONFIG;
 
 const elements = getElements();
 const store = createStrokeStore();
@@ -33,19 +42,29 @@ function setupCanvasSizing() {
   });
 }
 
-function recompute() {
+let recomputeToken = 0;
+
+async function recompute() {
   if (!dictionary) {
     return;
   }
 
-  pipeline = classifyDrawing({
+  // Recognition can be async (the siamese engine awaits ONNX inference). Guard
+  // against out-of-order completions so a slow run can't overwrite a newer one.
+  const token = ++recomputeToken;
+  const nextPipeline = await classifyDrawing({
     strokes: store.getStrokes(),
     previousRing,
     dictionary,
-    config: CONFIG
+    config: APP_CONFIG
   });
+  if (token !== recomputeToken) {
+    return;
+  }
+
+  pipeline = nextPipeline;
   previousRing = pipeline.ring;
-  spellIR = compileSpell({ glyphAST: pipeline.glyphAST, dictionary, config: CONFIG });
+  spellIR = compileSpell({ glyphAST: pipeline.glyphAST, dictionary, config: APP_CONFIG });
   updateSummary({ elements, store, capture, pipeline, spellIR });
   updateDiagnostics({ elements, store, pipeline, spellIR });
 }
@@ -122,7 +141,8 @@ async function init() {
     dictionary = await loadDictionary();
     renderDictionaryReference(elements, dictionary);
     capture.enable();
-    recompute();
+    warmupRecognizer(APP_CONFIG); // preload the siamese model if that engine is selected
+    await recompute();
     requestAnimationFrame(animationFrame);
   } catch (error) {
     console.error(error);
