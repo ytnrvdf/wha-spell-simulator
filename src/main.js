@@ -21,6 +21,8 @@ let pipeline = null;
 let spellIR = null;
 let previousRing = null;
 let resizeObserver = null;
+let ringRejectedAt = null;
+let wasClosedWithoutMagic = false;
 
 function setupCanvasSizing() {
   resizeObserver = setupResponsiveCanvasSizing({
@@ -46,6 +48,13 @@ function recompute() {
   });
   previousRing = pipeline.ring;
   spellIR = compileSpell({ glyphAST: pipeline.glyphAST, dictionary, config: CONFIG });
+
+  const closedWithoutMagic = Boolean(pipeline.ring?.complete) && !spellIR.active;
+  if (closedWithoutMagic && !wasClosedWithoutMagic) {
+    ringRejectedAt = performance.now();
+  }
+  wasClosedWithoutMagic = closedWithoutMagic;
+
   updateSummary({ elements, store, capture, pipeline, spellIR });
   updateDiagnostics({ elements, store, pipeline, spellIR });
 }
@@ -63,12 +72,21 @@ function animationFrame(timestamp) {
     renderer.renderActivatedGlyph({
       activatedAt: spellIR.activatedAt,
       duration: spellIR.duration,
+      quality: spellIR.quality,
+      stability: spellIR.stability,
+      strokes: store.getStrokes(),
+      pipeline,
+      timestamp
+    });
+  } else if (ringRejectedAt) {
+    renderer.renderRejectedRing({
+      rejectedAt: ringRejectedAt,
       strokes: store.getStrokes(),
       pipeline,
       timestamp
     });
   }
-  
+
   renderer.renderEffect({
     spellIR,
     ring: pipeline?.ring,

@@ -3,10 +3,20 @@ import {
   drawRingDebug,
   drawStrokeIdDebug,
   drawStrokes,
-  drawGlowingStrokes
+  drawActiveGlyphGlow,
+  drawRejectedRingGlow
 } from "./glyphOverlayRenderer.js";
 import { drawGuides, drawPaper } from "./paperRenderer.js";
 import { SpellEffectRenderer } from "./spellEffectRenderer.js";
+
+const REJECTED_RING_GLOW_MS = 820;
+
+const GOOD_MAGIC_QUALITY = 0.6;
+const GOOD_MAGIC_STABILITY = 0.5;
+
+function magicGrade(quality, stability) {
+  return (quality ?? 0) >= GOOD_MAGIC_QUALITY && (stability ?? 0) >= GOOD_MAGIC_STABILITY ? "good" : "bad";
+}
 
 function getActivatedStrokeIds(pipeline) {
   if (!pipeline) {
@@ -50,17 +60,23 @@ export class CanvasRenderer {
     }
   }
 
-  renderActivatedGlyph({ activatedAt, duration, strokes, pipeline, timestamp }) {
+  renderActivatedGlyph({ activatedAt, duration, quality, stability, strokes, pipeline, timestamp }) {
     const activatedStrokeIds = getActivatedStrokeIds(pipeline);
     const glowDuration = Math.max(250, duration * 1000);
-    drawGlowingStrokes(
+    drawActiveGlyphGlow(
       this.glyphCtx,
       activatedAt,
       activatedStrokeIds,
       strokes,
       glowDuration,
+      magicGrade(quality, stability),
       timestamp
     );
+  }
+
+  renderRejectedRing({ rejectedAt, strokes, pipeline, timestamp }) {
+    const ringStrokeIds = new Set(pipeline?.ring?.strokeIds ?? []);
+    drawRejectedRingGlow(this.glyphCtx, rejectedAt, ringStrokeIds, strokes, REJECTED_RING_GLOW_MS, timestamp);
   }
 
   renderEffect({ spellIR, ring, timestamp, showGuides }) {

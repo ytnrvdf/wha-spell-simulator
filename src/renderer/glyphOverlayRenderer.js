@@ -13,6 +13,56 @@ const GLOW_LAYERS = [
   }
 ];
 
+const REJECTED_GLOW_LAYERS = [
+  {
+    shadowColor: "rgba(214, 84, 56, 0.95)",
+    shadowBlur: (glowAlpha) => 28 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(202, 70, 46, ${(0.55 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 7 + 9 * glowAlpha
+  },
+  {
+    shadowColor: "rgba(255, 255, 255, 0.9)",
+    shadowBlur: (glowAlpha) => 13 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(255, 255, 255, ${(0.72 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 2.2 + 3 * glowAlpha
+  }
+];
+
+const GOOD_GLOW_LAYERS = [
+  {
+    shadowColor: "rgba(70, 210, 110, 0.95)",
+    shadowBlur: (glowAlpha) => 30 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(54, 196, 96, ${(0.55 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 7 + 9 * glowAlpha
+  },
+  {
+    shadowColor: "rgba(206, 255, 214, 0.9)",
+    shadowBlur: (glowAlpha) => 13 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(226, 255, 230, ${(0.72 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 2.2 + 3 * glowAlpha
+  }
+];
+
+const BAD_GLOW_LAYERS = [
+  {
+    shadowColor: "rgba(255, 255, 255, 0.95)",
+    shadowBlur: (glowAlpha) => 30 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(248, 248, 252, ${(0.6 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 8 + 10 * glowAlpha
+  },
+  {
+    shadowColor: "rgba(0, 0, 0, 0.92)",
+    shadowBlur: (glowAlpha) => 14 * glowAlpha,
+    strokeStyle: (glowAlpha, pulse) => `rgba(8, 8, 10, ${(0.72 + pulse * 0.2) * glowAlpha})`,
+    lineWidth: (glowAlpha) => 2.6 + 3 * glowAlpha
+  }
+];
+
+const ACTIVE_GLOW_PALETTES = {
+  good: GOOD_GLOW_LAYERS,
+  bad: BAD_GLOW_LAYERS
+};
+
 function hasStrokePoints(stroke) {
   return Boolean(stroke?.points?.length);
 }
@@ -169,6 +219,86 @@ export function drawGlowingStrokes(
 
   for (const stroke of activeGlowStrokes(activatedStrokeIds, strokes)) {
     drawSingleGlowingStroke(ctx, stroke, timestamp, glowAlpha);
+  }
+}
+
+function rejectedPulseEnvelope(t) {
+  if (t <= 0 || t >= 1) {
+    return 0;
+  }
+  const rise = Math.min(1, t / 0.18);
+  const fall = Math.pow(1 - Math.max(0, (t - 0.18) / 0.82), 1.7);
+  return rise * fall;
+}
+
+// Source-over (not additive) so dark and saturated hues stay visible on the light paper.
+function drawPaletteGlowLayer(ctx, stroke, glowAlpha, pulse, layer) {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.shadowBlur = layer.shadowBlur(glowAlpha);
+  ctx.shadowColor = layer.shadowColor;
+  ctx.strokeStyle = layer.strokeStyle(glowAlpha, pulse);
+  ctx.lineWidth = layer.lineWidth(glowAlpha);
+  traceStrokePath(ctx, stroke);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPaletteGlowStroke(ctx, stroke, glowAlpha, pulse, layers) {
+  if (!hasStrokePoints(stroke)) {
+    return;
+  }
+  for (const layer of layers) {
+    drawPaletteGlowLayer(ctx, stroke, glowAlpha, pulse, layer);
+  }
+}
+
+export function drawActiveGlyphGlow(
+  ctx,
+  activatedAt,
+  activatedStrokeIds,
+  strokes,
+  duration,
+  grade,
+  timestamp = performance.now()
+) {
+  if (!activatedStrokeIds?.size || !activatedAt) {
+    return;
+  }
+
+  const glowAlpha = glowAlphaAt(timestamp, activatedAt, duration);
+  if (glowAlpha <= 0) {
+    return;
+  }
+
+  const layers = ACTIVE_GLOW_PALETTES[grade] ?? GOOD_GLOW_LAYERS;
+  const pulse = 0.5 + Math.sin(timestamp * 0.006) * 0.5;
+  for (const stroke of activeGlowStrokes(activatedStrokeIds, strokes)) {
+    drawPaletteGlowStroke(ctx, stroke, glowAlpha, pulse, layers);
+  }
+}
+
+export function drawRejectedRingGlow(
+  ctx,
+  rejectedAt,
+  ringStrokeIds,
+  strokes,
+  duration,
+  timestamp = performance.now()
+) {
+  if (!ringStrokeIds?.size || !rejectedAt) {
+    return;
+  }
+
+  const glowAlpha = rejectedPulseEnvelope((timestamp - rejectedAt) / duration);
+  if (glowAlpha <= 0) {
+    return;
+  }
+
+  const pulse = 0.5 + Math.sin(timestamp * 0.012) * 0.5;
+  for (const stroke of activeGlowStrokes(ringStrokeIds, strokes)) {
+    drawPaletteGlowStroke(ctx, stroke, glowAlpha, pulse, REJECTED_GLOW_LAYERS);
   }
 }
 
