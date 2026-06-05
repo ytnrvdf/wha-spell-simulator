@@ -1,5 +1,6 @@
 import {
   drawCandidateDebug,
+  drawPlacementSelection,
   drawRingDebug,
   drawStrokeIdDebug,
   drawStrokes,
@@ -29,7 +30,7 @@ export class CanvasRenderer {
     this.config = config;
   }
 
-  renderGlyph({ strokes, currentStroke, pipeline, showGuides, showDebug }) {
+  renderGlyph({ strokes, currentStroke, pipeline, showGuides, showDebug, selection }) {
     const width = this.glyphCanvas.width;
     const height = this.glyphCanvas.height;
     drawPaper(this.glyphCtx, width, height);
@@ -47,6 +48,10 @@ export class CanvasRenderer {
     if (showDebug) {
       drawCandidateDebug(this.glyphCtx, pipeline?.candidates, pipeline?.recognitions);
       drawStrokeIdDebug(this.glyphCtx, strokes);
+    }
+
+    if (selection) {
+      drawPlacementSelection(this.glyphCtx, selection);
     }
   }
 

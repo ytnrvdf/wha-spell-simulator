@@ -1,9 +1,9 @@
 import { buildDiagnosticState } from "../debug/diagnosticState.js";
 import { writeJson } from "../debug/debugOverlay.js";
 
-export function updateDiagnostics({ elements, store, pipeline, spellIR }) {
+export function updateDiagnostics({ elements, strokes, pipeline, spellIR }) {
   const diagnosticState = buildDiagnosticState({
-    rawStrokes: store.getStrokes(),
+    rawStrokes: strokes,
     pipeline,
     spellIR
   });

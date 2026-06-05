@@ -1,7 +1,7 @@
 import { copyDiagnosticPanel } from "./diagnosticsView.js";
 
 function switchRootPanel(elements, panelId) {
-  const panels = [elements.dictionaryRootPanel, elements.diagnosticRootPanel];
+  const panels = [elements.dictionaryRootPanel, elements.diagnosticRootPanel, elements.shapesRootPanel];
   elements.panelTabButtons.forEach((button) => {
     button.classList.toggle("active", button.dataset.panelRoot === panelId);
   });
