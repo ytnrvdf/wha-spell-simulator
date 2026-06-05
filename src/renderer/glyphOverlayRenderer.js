@@ -226,6 +226,55 @@ export function drawStrokeIdDebug(ctx, strokes) {
   ctx.restore();
 }
 
+function drawHandleSquare(ctx, point, size = 9) {
+  ctx.beginPath();
+  ctx.rect(point.x - size / 2, point.y - size / 2, size, size);
+  ctx.fill();
+  ctx.stroke();
+}
+
+export function drawPlacementSelection(ctx, handles) {
+  if (!handles) {
+    return;
+  }
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(31, 111, 115, 0.85)";
+  ctx.fillStyle = "rgba(255, 251, 233, 0.96)";
+  ctx.lineWidth = 1.5;
+
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  handles.corners.forEach((corner, index) => {
+    if (index === 0) {
+      ctx.moveTo(corner.x, corner.y);
+    } else {
+      ctx.lineTo(corner.x, corner.y);
+    }
+  });
+  ctx.closePath();
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.beginPath();
+  ctx.moveTo(handles.topMid.x, handles.topMid.y);
+  ctx.lineTo(handles.rotate.x, handles.rotate.y);
+  ctx.stroke();
+
+  for (const corner of handles.corners) {
+    drawHandleSquare(ctx, corner);
+  }
+  for (const edge of handles.edgeHandles) {
+    drawHandleSquare(ctx, edge);
+  }
+
+  ctx.beginPath();
+  ctx.arc(handles.rotate.x, handles.rotate.y, 5.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
 export function drawCandidateDebug(ctx, candidates, recognitions) {
   const byCandidate = new Map((recognitions ?? []).map((recognition) => [recognition.candidateId, recognition]));
 

@@ -14,7 +14,7 @@ function entryRecognitionLabel(entry) {
   return getStrokeTemplate(entry)?.strokes?.length ? "stroke reference" : "not configured";
 }
 
-function renderStrokePreview(strokes) {
+export function renderStrokePreview(strokes) {
   if (!strokes?.length) {
     return "";
   }

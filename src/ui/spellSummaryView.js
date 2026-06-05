@@ -70,7 +70,7 @@ function formatManifestations(spellIR) {
   return manifestations.map(([id]) => id).join(", ");
 }
 
-export function updateSummary({ elements, store, capture, pipeline, spellIR }) {
+export function updateSummary({ elements, store, capture, pipeline, spellIR, arrangeMode = false, placementCount = 0 }) {
   const ringClosed = Boolean(pipeline?.ring?.complete);
   const hasUnsupportedMultipleRings = Boolean(pipeline?.ring?.unsupportedMultipleRings?.length);
   const hasUnsupportedMultipleSigils = Boolean(pipeline?.glyphAST?.unsupportedMultipleSigils?.length);
@@ -87,13 +87,14 @@ export function updateSummary({ elements, store, capture, pipeline, spellIR }) {
 
   const inputLocked = ringClosed || hasUnsupportedStructure;
   const undoLocked = ringClosed;
-  elements.undoButton.disabled = undoLocked || store.count() === 0;
-  elements.glyphCanvas.classList.toggle("locked", inputLocked);
+  const markCount = store.count() + placementCount;
+  elements.undoButton.disabled = undoLocked || markCount === 0;
+  elements.glyphCanvas.classList.toggle("locked", inputLocked && !arrangeMode);
   elements.canvasShell.classList.toggle("portal-active", Boolean(spellIR?.active)); // tilting the paper angle
-  elements.canvasHint.classList.toggle("hidden", store.count() > 0 || !elements.guidesToggle.checked);
+  elements.canvasHint.classList.toggle("hidden", markCount > 0 || !elements.guidesToggle.checked);
 
   if (capture) {
-    capture.setLocked(inputLocked);
+    capture.setLocked(inputLocked || arrangeMode);
   }
 
   elements.elementValue.textContent = spellIR?.element ? spellIR.element : "None";

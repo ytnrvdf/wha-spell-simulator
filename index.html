@@ -35,6 +35,10 @@
               <input type="checkbox" id="diagnosticsToggle">
               <span>Glyph Diagnostics</span>
             </label>
+            <label class="toggle">
+              <input type="checkbox" id="arrangeToggle">
+              <span>Arrange Shapes</span>
+            </label>
           </section>
 
           <h2 class="panel-section-title">Spell State</h2>
@@ -83,6 +87,7 @@
         <aside class="dictionary-panel" aria-label="Dictionary and diagnostics">
           <div class="panel-tabs">
             <button type="button" class="panel-tab-button active" data-panel-root="dictionaryRootPanel">Dictionary</button>
+            <button type="button" class="panel-tab-button" data-panel-root="shapesRootPanel">Shapes</button>
             <button type="button" class="panel-tab-button" data-panel-root="diagnosticRootPanel">Diagnostic</button>
           </div>
 
@@ -117,6 +122,17 @@
                 </p>
                 <div id="signReferenceCards"></div>
               </div>
+            </section>
+          </section>
+
+          <section id="shapesRootPanel" hidden>
+            <section class="reference-panel" aria-label="Shape palette">
+              <p class="panel-description">
+                Turn on Arrange Shapes, pick a ring, sigil, or sign, then click the canvas to place it.
+                Select a placed shape to move, scale, elongate, or rotate it.
+              </p>
+              <div id="shapePaletteCards" class="shape-palette"></div>
+              <div id="shapeInspector" class="shape-inspector"></div>
             </section>
           </section>
 
