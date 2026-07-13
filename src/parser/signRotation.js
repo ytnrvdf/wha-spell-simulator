@@ -11,8 +11,11 @@ const SIGN_ROTATION_TOLERANCE_DEG = 15;
 // Based on what observed in fan's wiki: Sign templates are authored/registered 
 // as if the sign sits at the bottom of the ring.
 // Rotate a copy of each sign candidate into that frame before template matching.
-function signCandidateToTemplateRotationDeg(candidateAngleDeg) {
-  return normalizeAngleDeg((candidateAngleDeg ?? CANONICAL_SIGN_ANGLE_DEG) - CANONICAL_SIGN_ANGLE_DEG);
+function signCandidateToTemplateRotationDeg(candidateAngleDeg, templateRotationOffsetDeg = 0) {
+  return normalizeAngleDeg(
+    (candidateAngleDeg ?? CANONICAL_SIGN_ANGLE_DEG) -
+      CANONICAL_SIGN_ANGLE_DEG + templateRotationOffsetDeg
+  );
 }
 
 // After the ring-relative rotation, only allow a small matching wiggle. Larger

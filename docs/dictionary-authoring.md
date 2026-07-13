@@ -246,6 +246,8 @@ Author sign `strokeTemplate` drawings as if the sign is placed at the bottom of 
 
 For example, a sign at the top of the ring, `90` degrees, is compared with a 180 degree rotation back to the bottom reference. A sign at the right side of the ring, `0` degrees, is compared with a 270 degree rotation back to the bottom reference.
 
+If an existing template is authored in the opposite pose, set `recognitionRotationOffsetDeg` on that sign instead of changing the spell semantics. For example, `convergence` uses `180` so the triangle point must face the spell center even though its stored template ink is inverted.
+
 ## Creating A Template With The Reference Maker
 
 The tool is currently at:

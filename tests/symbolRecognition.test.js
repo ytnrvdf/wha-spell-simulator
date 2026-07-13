@@ -266,6 +266,32 @@ test("recognizes signs in the ring-relative orientation for their position", () 
   );
 });
 
+test("recognizes convergence when the triangle point faces the spell center", () => {
+  const convergence = realDictionary.signs.find((entry) => entry.id === "convergence");
+  assert.ok(convergence);
+
+  const bottomInwardConvergence = cleanCandidateFromTemplate(convergence, {
+    layer: "outer",
+    angleDeg: 270,
+    rotationDeg: 180
+  });
+  const bottomOutwardConvergence = cleanCandidateFromTemplate(convergence, {
+    layer: "outer",
+    angleDeg: 270
+  });
+
+  const [inwardRecognition, outwardRecognition] = recognizeCandidates(
+    [bottomInwardConvergence, bottomOutwardConvergence],
+    realDictionary,
+    CONFIG
+  );
+
+  assert.equal(inwardRecognition.recognized, true);
+  assert.equal(inwardRecognition.kind, "sign");
+  assert.equal(inwardRecognition.id, "convergence");
+  assert.notEqual(outwardRecognition.id, "convergence");
+});
+
 test("rejects a sign drawn in the wrong orientation for its ring position", () => {
   const column = realDictionary.signs.find((entry) => entry.id === "column");
   assert.ok(column);
