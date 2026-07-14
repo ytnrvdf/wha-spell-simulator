@@ -58,6 +58,7 @@
       "outer"
     ],
     "sourceNotes": "Convergence causes the magic of its spell to become more focused, centered down to a single point. It can also make loose particles become more rigid, as explained by the disciples of Qifrey's Atelier when they were designing the serpent's bed of sand, saying that it would cause the sand the spell produced to become hard and compact. One of the triangle's points is typically seen pointing inwards.",
+    "recognitionRotationOffsetDeg": 180,
     "semantic": {
       "manifestation": "convergence",
       "directionMode": "inward",
