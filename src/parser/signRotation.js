@@ -89,7 +89,10 @@ export function recognitionPlanForSymbol(kind, entry, candidate) {
 
   // Signs get normalized to the bottom-of-ring template frame, then the matcher
   // tests only the small tolerance rotations from signRecognitionRotations().
-  const baseRotationDeg = signCandidateToTemplateRotationDeg(candidate.angleDeg);
+  const baseRotationDeg = signCandidateToTemplateRotationDeg(
+    candidate.angleDeg,
+    entry.recognitionRotationOffsetDeg
+  );
   return {
     candidate: rotateCandidate(candidate, baseRotationDeg),
     baseRotationDeg,
